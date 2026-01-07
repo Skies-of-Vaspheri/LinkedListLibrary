@@ -1,2 +1,2 @@
 # LinkedListLibrary
-Featuring a linked list library I wrote to get better with pointers.
+This repository features a library containing c++ code for a LinkedList class and LinkedListNode class, making for a type of container similar to dynamic arrays or vectors.
