@@ -1,0 +1,180 @@
+//Default constructor
+template <typename DataT>
+LinkedList<DataT>::LinkedList(void):count(0),head(nullptr),tail(nullptr){}
+
+//Constructor with first node
+template <typename DataT>
+LinkedList<DataT>::LinkedList(DataT dat)
+    :count(0),head(nullptr),tail(nullptr){
+    head = new LinkedListNode<DataT>(dat);
+    tail = head;
+    count = 1;
+}
+
+//Copy Constructor
+template <typename DataT>
+LinkedList<DataT>::LinkedList(const LinkedList<DataT> & other) {
+    count = other.count;
+    head = new LinkedListNode<DataT>(other.head -> getDat());
+    LinkedListNode<DataT>* curr = head;
+    LinkedListNode<DataT>* otherCurr = other.head ->getP();
+    while (otherCurr != nullptr) {
+        LinkedListNode<DataT>* nextNode = 
+            new LinkedListNode<DataT>(otherCurr -> getDat());
+        curr->setP(nextNode);
+        curr = nextNode;
+        otherCurr = otherCurr ->getP();
+    }
+    tail = curr;
+    return;
+}
+
+//Destructor
+template <typename DataT>
+LinkedList<DataT>::~LinkedList() {
+    LinkedListNode<DataT>* curr = head;
+    while (curr != nullptr) {
+        LinkedListNode<DataT>* step = curr->getP();
+        delete curr;
+        curr = step;
+    }
+    head = nullptr;
+    tail = nullptr;
+    count = 0;
+}
+
+//Append element
+template <typename DataT>
+void LinkedList<DataT>::operator+=(DataT dat) {
+    if (head == nullptr) {
+        head = new LinkedListNode<DataT>(dat);
+        tail = head;
+        count = 1;
+    } else {
+        count++;
+        LinkedListNode<DataT>* tailNode = new LinkedListNode<DataT>(dat);
+        LinkedListNode<DataT>* lastObj = tail;
+        tail = tailNode;
+        lastObj -> setP (tail);
+    } 
+    return;
+}
+
+//Assignment Operator
+template <typename DataT>
+LinkedList<DataT>& LinkedList<DataT>::operator=
+        (const LinkedList<DataT> & other) {
+    if (this != &other) {
+        LinkedListNode<DataT>* curr = head;
+        while (curr != nullptr) {
+            LinkedListNode<DataT>* step = curr->getP();
+            delete curr;
+            curr = step;
+        }
+        head = nullptr;
+        tail = nullptr;
+        count = 0;
+        count = other.count;
+        head = new LinkedListNode<DataT>(other.head -> getDat());
+        curr = head;
+        LinkedListNode<DataT>* otherCurr = other.head ->getP();
+        while (otherCurr != nullptr) {
+            LinkedListNode<DataT>* nextNode = 
+                new LinkedListNode<DataT>(otherCurr -> getDat());
+            curr->setP(nextNode);
+            curr = nextNode;
+            otherCurr = otherCurr ->getP();
+        }
+        tail = curr;
+    }
+    return *this;
+}
+
+//Get value from index
+template <typename DataT>
+DataT LinkedList<DataT>::operator[](size_t index) const {
+    if (index < count) {
+        LinkedListNode<DataT> * curr = head;
+        for (size_t i = 0; i < index; i++) {
+            curr = curr->getP();
+        }
+        return curr->getDat();
+    }
+    return tail->getDat();
+}
+ 
+//Update value from index
+template <typename DataT>
+DataT& LinkedList<DataT>::operator[](size_t index) {
+    if (index < count) {
+        LinkedListNode<DataT> * curr = head;
+        for (size_t i = 0; i < index; i++) {
+            curr = curr->getP();
+        }
+        return curr->getDat();
+    }
+    return tail->getDat();
+}
+
+//Insert element at index
+template <typename DataT>
+void LinkedList<DataT>::insert(size_t index, DataT dat) {
+    count++;
+    if (index > 0 && index < count) {
+        LinkedListNode<DataT> * curr = head;
+        for (size_t i = 1; i < index; i++) {
+            curr = curr->getP();
+        }
+        LinkedListNode<DataT>* newNode = new LinkedListNode<DataT>(dat);
+        newNode->setP(curr->getP());
+        curr->setP(newNode);
+    } else if (index == 0) {
+        LinkedListNode<DataT>* headNode = new LinkedListNode<DataT>(dat);
+        headNode->setP(head);
+        head = headNode;
+    } else {
+        *this+=dat;
+    }
+    return;
+}
+
+//Remove a designated index and element
+template <typename DataT>
+void LinkedList<DataT>::remove(size_t index) {
+    count--;
+    if (index > 0 && index < count) {
+        LinkedListNode<DataT> * curr = head;
+        for (size_t i = 1; i < index; i++) {
+            curr = curr->getP();
+        }
+        LinkedListNode<DataT>* tempptr = curr->getP();
+        curr->setP(tempptr->getP());
+        delete tempptr;
+    } else if (index == 0) {
+        LinkedListNode<DataT>* tempptr = head->getP();
+        delete head;
+        head = tempptr;
+    } else {
+        LinkedListNode<DataT>* curr = head;
+        for (size_t i = 1; i < count; i++) {
+            curr = curr->getP();
+        }
+        delete (tail);
+        curr->setP(nullptr);
+        tail = curr;
+    }
+    return;
+}
+
+//returns the index of the first match
+template <typename DataT>
+size_t LinkedList<DataT>::find(DataT dat) {
+    LinkedListNode<DataT>* curr = head;
+    for (size_t i = 0; i < count; i++) {
+        if (curr->getDat() == dat) {
+            return i;
+        }
+        curr = curr->getP();
+    }
+    return -1;
+}
